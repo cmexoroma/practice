@@ -4,7 +4,7 @@ public static class StringExtensions
 {
     public static bool IsPalindrome(this string input)
     {
-        if(input.Length == 0) return false;
+        if(String.IsNullOrWhiteSpace(input)) return false;
         
         input = input.ToLower();
         int leftIndex = 0;
