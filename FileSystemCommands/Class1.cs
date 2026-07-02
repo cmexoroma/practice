@@ -16,7 +16,7 @@ public class DirectorySizeCommand : ICommand
     {
         if (Directory.Exists(Catalog))
         {
-            double size = 0;
+            long size = 0;
             var dirInfo = new DirectoryInfo(Catalog);
             var files = dirInfo.GetFiles("*", SearchOption.AllDirectories);
 
