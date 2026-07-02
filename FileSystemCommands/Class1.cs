@@ -3,6 +3,8 @@ using CommandLib;
 
 namespace FileSystemCommands;
 
+[DisplayName("Размер каталога")]
+[Version(1,0)]
 public class DirectorySizeCommand : ICommand
 {
     private string Catalog { get; }
@@ -33,6 +35,8 @@ public class DirectorySizeCommand : ICommand
     }
 }
 
+[DisplayName("Поиск файлов по маске")]
+[Version(1,2)]
 public class FindFilesCommand : ICommand
 {
     private string Catalog { get; }

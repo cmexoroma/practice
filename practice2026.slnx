@@ -2,6 +2,7 @@
   <Project Path="CommandLib/CommandLib.csproj" />
   <Project Path="CommandRunner/CommandRunner.csproj" />
   <Project Path="FileSystemCommands/FileSystemCommands.csproj" />
+  <Project Path="MetaDate/MetaDate.csproj" />
   <Project Path="task08/task08.csproj" />
   <Project Path="task08tests/task08tests.csproj" />
 </Solution>
