@@ -20,6 +20,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\task08\task08.csproj" />
+    <ProjectReference Include="..\FileSystemCommands\FileSystemCommands.csproj" />
+    <ProjectReference Include="..\CommandRunner\CommandRunner.csproj" />
   </ItemGroup>
 
 </Project>
