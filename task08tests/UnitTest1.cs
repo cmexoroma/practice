@@ -1,72 +1,41 @@
-﻿using FileSystemCommands;
-using CommandRunner;
+﻿using Xunit;
+using MetaDate;
+using FileSystemCommands;
 
 namespace task08tests;
 
 public class FileSystemCommandsTests
 {
     [Fact]
-    public void DirectorySizeCommand_ShouldCalculateSize()
+    public void MetaDate_EmptyTest()
     {
-        var testDir = Path.Combine(Path.GetTempPath(), "TestDir");
-
-        if(Directory.Exists(testDir)) Directory.Delete(testDir, true);
-
-        Directory.CreateDirectory(testDir);
-        File.WriteAllText(Path.Combine(testDir, "test1.txt"), "Hello");
-        File.WriteAllText(Path.Combine(testDir, "test2.txt"), "World");
-
-        var command = new DirectorySizeCommand(testDir);
         var output = new StringWriter();
-
         Console.SetOut(output);
 
-        command.Execute(); // Проверяем, что не возникает исключений
+        Program.Main(Array.Empty<string>());
 
-        string expected = "10 байт(-а)";
+        string expectedString = "Укажите путь к DLL файлу в аргумент функции";
 
-        Directory.Delete(testDir, true);
-
-        Assert.Contains(expected, output.ToString());
+        Assert.Contains(expectedString, output.ToString());
     }
 
     [Fact]
-    public void FindFilesCommand_ShouldFindMatchingFiles()
-    {
-        var testDir = Path.Combine(Path.GetTempPath(), "TestDir");
-
-        if(Directory.Exists(testDir)) Directory.Delete(testDir, true);
-
-        Directory.CreateDirectory(testDir);
-        File.WriteAllText(Path.Combine(testDir, "file1.txt"), "Text");
-        File.WriteAllText(Path.Combine(testDir, "file2.log"), "Log");
-
-        var command = new FindFilesCommand(testDir, "*.txt");
-        var output = new StringWriter();
-
-        Console.SetOut(output);
-
-        command.Execute(); // Должен найти 1 файл
-
-        string expected = "1 файл(-ов)";
-
-        Directory.Delete(testDir, true);
-
-        Assert.Contains(expected, output.ToString());
-    }
-
-    [Fact]
-    public void CommandRunner_Test()
+    public void MetaDate_Test()
     {
         var output = new StringWriter();
         Console.SetOut(output);
-        
-        Program.Main();
 
-        string expectedString1 = "22 байт(-а)";
-        string expectedString2 = "2 файл(-ов)";
+        Program.Main(new[] {typeof(DirectorySizeCommand).Assembly.Location});
+
+        string expectedString1 = "Метод: Execute";
+        string expectedString2 = "Поиск файлов по маске";
+        string expectedString3 = "Размер каталога";
+        string expectedString4 = "Версия: 1.2";
 
         Assert.Contains(expectedString1, output.ToString());
         Assert.Contains(expectedString2, output.ToString());
+        Assert.Contains(expectedString3, output.ToString());
+        Assert.Contains(expectedString4, output.ToString());
     }
 }
+

@@ -4,11 +4,14 @@ namespace MetaDate;
 
 public class Program
 {
-    public static void Main()
+    public static void Main(string[] args)
     {
-        Console.WriteLine("Введите путь до библиотеки");
-
-        string? pathDll = Console.ReadLine();
+        if(args.Length == 0)
+        {
+            Console.WriteLine("Укажите путь к DLL файлу в аргумент функции");
+            return;
+        }
+        string pathDll = args[0];
         if(File.Exists(pathDll))
         {
             Assembly ass = Assembly.LoadFrom(pathDll);
