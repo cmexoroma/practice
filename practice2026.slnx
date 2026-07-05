@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="ClassA/ClassA.csproj" />
+  <Project Path="ClassB/ClassB.csproj" />
+  <Project Path="ClassC/ClassC.csproj" />
+  <Project Path="task10/task10.csproj" />
+  <Project Path="task10tests/task10tests.csproj" />
+</Solution>
