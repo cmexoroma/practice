@@ -10,19 +10,23 @@ public class ClassAnalyzer
 
     public ClassAnalyzer(Type type)
     {
+        if (type is null) throw new ArgumentNullException(nameof(type));
+
         _type = type;
     }
 
     public IEnumerable<string> GetPublicMethods()
     {
-        var res = _type.GetMethods().Select(m => m.Name);
+        var res = _type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Select(m => m.Name);
 
         return res;
     }
 
     public IEnumerable<string> GetMethodParams(string methodname)
     {
-        MethodInfo? method = _type.GetMethod(methodname);
+        if (string.IsNullOrWhiteSpace(methodname)) throw new ArgumentNullException(nameof(methodname));
+
+        MethodInfo method = _type.GetMethod(methodname);
 
         if(method != null)
         {
@@ -31,7 +35,7 @@ public class ClassAnalyzer
             return res;
         }
 
-        return null;
+        return Enumerable.Empty<string>();
     }
 
     public IEnumerable<string> GetAllFields()
@@ -43,7 +47,7 @@ public class ClassAnalyzer
 
     public IEnumerable<string> GetProperties()
     {
-        var res = _type.GetProperties().Select(p => p.Name);
+        var res = _type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Select(p => p.Name);
 
         return res;
     }
