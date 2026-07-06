@@ -20,11 +20,16 @@ public class CustomCollection<T> : IEnumerable<T>
 
     public static IEnumerable<int> GenerateSequence(int start, int count)
     {
+        if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+
         for(int i = start; i < start + count; i++) yield return i;     
     }
 
     public IEnumerable<T> FilterAndSort(Func<T, bool> predicate, Func<T, IComparable> keySelector)
     {
+        if (predicate is null) throw new ArgumentNullException(nameof(predicate));
+        if (keySelector is null) throw new ArgumentNullException(nameof(keySelector));
+
         var res = _items.Where(predicate).OrderBy(keySelector);
 
         return res;
