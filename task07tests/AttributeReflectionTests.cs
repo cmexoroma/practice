@@ -63,5 +63,7 @@ public class AttributeReflectionTests
         Assert.Contains(expectedString2, output.ToString());
         Assert.Contains(expectedString3, output.ToString());
         Assert.Contains(expectedString4, output.ToString());
+        Assert.DoesNotContain("Класс методов не имеет", output.ToString());
+        Assert.DoesNotContain("Класс свойств не имеет", output.ToString());
     }
 }
