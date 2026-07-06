@@ -67,6 +67,18 @@ public class SpaceshipTests
     }
 
     [Fact]
+    public void Cruiser_RotateNegativeAngleTest()
+    {
+        var cruiser = new Cruiser();
+
+        cruiser.Rotate(-150);
+        Assert.Equal(210, cruiser.Angle);
+
+        cruiser.Rotate(150);
+        Assert.Equal(0, cruiser.Angle);
+    }
+
+    [Fact]
     public void Cruiser_FireTest()
     {
         var cruiser = new Cruiser();
@@ -103,6 +115,18 @@ public class SpaceshipTests
 
         fighter.Rotate(260);
         Assert.Equal(20, fighter.Angle);
+    }
+
+    [Fact]
+    public void Fighter_RotateNegativAngleTest()
+    {
+        var fighter = new Fighter();
+
+        fighter.Rotate(-120);
+        Assert.Equal(240, fighter.Angle);
+
+        fighter.Rotate(260);
+        Assert.Equal(140, fighter.Angle);
     }
 
     [Fact]
