@@ -2,34 +2,37 @@
 using System.Reflection;
 using CommandLib;
 
-namespace CommandRunner;
-
-public class Program
+public class CommandRunner
 {
     public static void Main()
     {
         string dllPath = Path.Combine(AppContext.BaseDirectory, "FileSystemCommands.dll");
-
-        if(File.Exists(dllPath))
+        try
         {
+            if (!File.Exists(dllPath))
+            {
+                Console.WriteLine("Ошибка: DLL не найден");
+                return;
+            }
+
             Assembly ass = Assembly.LoadFrom(dllPath);
 
             var types = ass.GetTypes().Where(c => typeof(ICommand).IsAssignableFrom(c)).ToList();
 
-            Console.WriteLine("Типы реализующие интерфейс ICommand:"); 
-            foreach(var t in types)
+            Console.WriteLine("Типы реализующие интерфейс ICommand:");
+            foreach (var t in types)
             {
                 Console.WriteLine($"\t{t.Name}");
             }
 
-            foreach(var t in types)
+            foreach (var t in types)
             {
-                if(t.Name == "DirectorySizeCommand")
+                if (t.Name == "DirectorySizeCommand")
                 {
-                    
+
                     var testDir = Path.Combine(Path.GetTempPath(), "TestDir");
 
-                    if(Directory.Exists(testDir)) Directory.Delete(testDir, true);
+                    if (Directory.Exists(testDir)) Directory.Delete(testDir, true);
 
                     Directory.CreateDirectory(testDir);
 
@@ -45,11 +48,11 @@ public class Program
                     Directory.Delete(testDir, true);
                 }
 
-                else if(t.Name == "FindFilesCommand")
+                else if (t.Name == "FindFilesCommand")
                 {
                     var testDir = Path.Combine(Path.GetTempPath(), "TestDir");
 
-                    if(Directory.Exists(testDir)) Directory.Delete(testDir, true);
+                    if (Directory.Exists(testDir)) Directory.Delete(testDir, true);
 
                     Directory.CreateDirectory(testDir);
                     var subTestDir = Path.Combine(testDir, "SubDir");
@@ -68,6 +71,18 @@ public class Program
                 }
             }
         }
-        else Console.WriteLine("Ошибка: dll файл не найден");
+        catch(BadImageFormatException)
+        {
+            Console.WriteLine("Ошибка: BadImageFormat");
+        }
+        catch(FileLoadException )
+        {
+            Console.WriteLine("Ошибка загрузки сборки");
+        }
+        catch(ReflectionTypeLoadException)
+        {
+            Console.WriteLine("Ошибка загрузки типов из сборки");
+        }
     }
 }
+

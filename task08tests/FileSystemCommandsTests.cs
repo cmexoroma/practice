@@ -1,5 +1,4 @@
 ﻿using FileSystemCommands;
-using CommandRunner;
 
 namespace task08tests;
 
@@ -61,7 +60,7 @@ public class FileSystemCommandsTests
         var output = new StringWriter();
         Console.SetOut(output);
         
-        Program.Main();
+        CommandRunner.Main();
 
         string expectedString1 = "22 байт(-а)";
         string expectedString2 = "2 файл(-ов)";
