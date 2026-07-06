@@ -26,11 +26,11 @@ public class ClassAnalyzer
     {
         if (string.IsNullOrWhiteSpace(methodname)) throw new ArgumentNullException(nameof(methodname));
 
-        MethodInfo method = _type.GetMethod(methodname);
+        MethodInfo? method = _type.GetMethod(methodname);
 
         if(method != null)
         {
-            var res = method.GetParameters().Select(p => p.Name).Append(method.ReturnType.Name);
+            var res = method.GetParameters().Select(p => p.Name!).Append(method.ReturnType.Name);
 
             return res;
         }
