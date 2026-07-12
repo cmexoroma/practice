@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="JsonRunner/JsonRunner.csproj" />
+  <Project Path="task13/task13.csproj" />
+  <Project Path="task13tests/task13tests.csproj" />
+</Solution>
