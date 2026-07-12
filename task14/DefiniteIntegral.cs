@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 
 namespace task14;
 
@@ -13,46 +14,48 @@ public class DefiniteIntegral
     public static double Solve(double a, double b, Func<double, double> function, double step, int threadsnumber)
     {
         // отсюда надо начинать реализацию задачи
-        long totalSteps = (int)((b - a) / step);
+        long totalSteps = (long)Math.Round(((b - a) / step));
         double totalSum = 0;
         var threads = new Thread[threadsnumber];
-        long stepsPerThread = totalSteps / threadsnumber ;
+        long stepsPerThread = totalSteps / threadsnumber;
 
-        Barrier barrier = new Barrier(threadsnumber + 1);
-
-        for (int t = 0; t < threadsnumber; t++)
+        using Barrier barrier = new Barrier(threadsnumber + 1);
         {
-            long startStep = t * stepsPerThread;
-            long endStep = (t == threadsnumber - 1) ? totalSteps : startStep + stepsPerThread;
 
-            threads[t] = new Thread( () =>
+            for (int t = 0; t < threadsnumber; t++)
             {
-                double localSum = LocalIntegral(startStep, endStep, a, step, function);
+                long startStep = t * stepsPerThread;
+                long endStep = (t == threadsnumber - 1) ? totalSteps : startStep + stepsPerThread;
 
-                double initial;
-                double result;
-
-                do
+                threads[t] = new Thread(() =>
                 {
-                    initial = totalSum;
-                    result = initial + localSum;
-                }
-                while(Interlocked.CompareExchange(ref totalSum, result, initial) != initial);
+                    double localSum = LocalIntegral(startStep, endStep, a, step, function);
 
-                barrier.SignalAndWait();
-            });
-            threads[t].Start();
+                    double initial;
+                    double result;
+
+                    do
+                    {
+                        initial = totalSum;
+                        result = initial + localSum;
+                    }
+                    while (Interlocked.CompareExchange(ref totalSum, result, initial) != initial);
+
+                    barrier.SignalAndWait();
+                });
+                threads[t].Start();
+            }
+
+            barrier.SignalAndWait();
         }
-
-        barrier.SignalAndWait();
-
         return totalSum;
+
     }
 
     private static double LocalIntegral(long startStep, long endStep, double a, double step, Func<double, double> func)
     {
         double sum = 0;
-        for(long i = startStep; i < endStep; i++)
+        for (long i = startStep; i < endStep; i++)
         {
             double x1 = a + i * step;
             double x2 = x1 + step;
@@ -60,5 +63,11 @@ public class DefiniteIntegral
         }
 
         return sum;
+    }
+
+    public static double OneThread(double a, double b, Func<double, double> function, double step)
+    {
+        long totalSteps = (long)Math.Round(((b - a) / step));
+        return LocalIntegral(0, totalSteps, a, step, function);
     }
 }

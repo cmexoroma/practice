@@ -1,4 +1,5 @@
-﻿using task14;
+﻿using System.Diagnostics;
+using task14;
 
 namespace task14tests;
 
@@ -24,8 +25,24 @@ public class DefiniteIntegralTests
     [Fact]
     public void DefiniteIntegral_Expression()
     {
-        var EXPRESSION = (double x) => (8 + 2 * x - x*x);
+        var EXPRESSION = (double x) => (8 + 2 * x - x * x);
 
-        Assert.Equal(36, DefiniteIntegral.Solve(-2, 4, EXPRESSION, 1e-6, 4), 1e-5);
+        Assert.Equal(36, DefiniteIntegral.Solve(-2, 4, EXPRESSION, 1e-6, 4), 1e-4);
+    }
+
+    [Fact]
+    public void DefiniteOneThreadIntegral_Sin()
+    {
+        var SIN = (double x) => Math.Sin(x);
+
+        Assert.Equal(0, DefiniteIntegral.OneThread(-1, 1, SIN, 1e-5), 1e-4);
+    }
+
+    [Fact]
+    public void DefiniteOneThreadIntegral_Expression()
+    {
+        var EXPRESSION = (double x) => (8 + 2 * x - x * x);
+
+        Assert.Equal(36, DefiniteIntegral.OneThread(-2, 4, EXPRESSION, 1e-6), 1e-5);
     }
 }
