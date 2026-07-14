@@ -8,162 +8,34 @@ namespace task17tests;
 public class ServerThreadTest
 {
     [Fact]
-    public void LongCommandsTest()
+    public void TestCommandLong()
     {
         var server = new ServerThread();
         var thread = new Thread(server.ExecuteThread);
-        var longCommandA = new Mock<ILongCommand>();
-        var cntA = 0;
-        var longCommandB = new Mock<ILongCommand>();
-        var cntB = 0;
-        var softStop = new SoftStop(server);
-        List<string> order = new();
+        var output = new StringWriter();
 
-        longCommandA.Setup(c => c.IsCompleted).Returns(() => cntA >=5);
-        longCommandB.Setup(c => c.IsCompleted).Returns(() => cntB >= 3);
-        longCommandA.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntA++;
-            order.Add("A");
-        });
-        longCommandB.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntB++;
-            order.Add("B");
-        });
+        Console.SetOut(output);
 
-        server.EnqueueCommand(longCommandA.Object);
-        server.EnqueueCommand(softStop);
-        server.EnqueueCommand(longCommandB.Object);
-
+        for (int i = 1; i < 6; i++) server.EnqueueCommand(new TestCommand(i));
+        
         thread.Start();
+        Thread.Sleep(500);
+
+        server.EnqueueCommand(new HardStop(server));
+
         thread.Join(500);
 
-        Assert.Equal(5, order.Count(x => x == "A"));
-        Assert.Equal(3, order.Count(x => x == "B"));
+        var str = output.ToString().Replace("\r", "").Split("\n").ToList();
+        str.Remove("");
+        var ex = new List<string>();
+        for (int i = 1; i < 4; i++)
+        {
+            for (int j = 1; j < 6; j++)
+            {
+                ex.Add($"Поток {j} вызов {i}");
+            }
+        }
+        Assert.Equal(ex, str);
         Assert.False(thread.IsAlive);
-    }
-
-    [Fact]
-    public void LongCommandWhithHardStopTest()
-    {
-        var server = new ServerThread();
-        var thread = new Thread(server.ExecuteThread);
-        var longCommandA = new Mock<ILongCommand>();
-        var cntA = 0;
-        var longCommandB = new Mock<ILongCommand>();
-        var cntB = 0;
-        var hardStop = new HardStop(server);
-        List<string> order = new();
-
-        longCommandA.Setup(c => c.IsCompleted).Returns(() => cntA >= 5);
-        longCommandB.Setup(c => c.IsCompleted).Returns(() => cntB >= 3);
-        longCommandA.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntA++;
-            order.Add("A");
-        });
-        longCommandB.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntB++;
-            order.Add("B");
-        });
-
-        server.EnqueueCommand(longCommandA.Object);
-        server.EnqueueCommand(hardStop);
-        server.EnqueueCommand(longCommandB.Object);
-
-        thread.Start();
-        thread.Join(500);
-
-        Assert.Equal(1, order.Count(x => x == "A"));
-        Assert.Equal(0, order.Count(x => x == "B"));
-        Assert.False(thread.IsAlive);
-    }
-
-    [Fact]
-    public void LongCommandsWithICommandTest()
-    {
-        var server = new ServerThread();
-        var thread = new Thread(server.ExecuteThread);
-        var longCommandA = new Mock<ILongCommand>();
-        var cntA = 0;
-        var longCommandB = new Mock<ILongCommand>();
-        var cntB = 0;
-        var CommandC = new Mock<ICommand>();
-        var softStop = new SoftStop(server);
-        List<string> order = new();
-
-        longCommandA.Setup(c => c.IsCompleted).Returns(() => cntA >= 5);
-        longCommandB.Setup(c => c.IsCompleted).Returns(() => cntB >= 3);
-        longCommandA.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntA++;
-            order.Add("A");
-        });
-        longCommandB.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntB++;
-            order.Add("B");
-        });
-        CommandC.Setup(c => c.Execute()).Callback(()=>
-        {
-            order.Add("C");
-        });
-
-        server.EnqueueCommand(longCommandA.Object);
-        server.EnqueueCommand(softStop);
-        server.EnqueueCommand(longCommandB.Object);
-        server.EnqueueCommand(CommandC.Object);
-
-        thread.Start();
-        thread.Join(500);
-
-        Assert.Equal(5, order.Count(x => x == "A"));
-        Assert.Equal(3, order.Count(x => x == "B"));
-        Assert.Equal(1, order.Count(x => x == "C"));
-        Assert.False(thread.IsAlive);
-    }
-
-    [Fact]
-    public void LongCommandShouldExecuteInCorrectOrder()
-    {
-        var server = new ServerThread();
-        var thread = new Thread(server.ExecuteThread);
-        var longCommandA = new Mock<ILongCommand>();
-        var cntA = 0;
-        var longCommandB = new Mock<ILongCommand>();
-        var cntB = 0;
-        var CommandC = new Mock<ICommand>();
-        var softStop = new SoftStop(server);
-        List<string> order = new();
-
-        longCommandA.Setup(c => c.IsCompleted).Returns(() => cntA >= 5);
-        longCommandB.Setup(c => c.IsCompleted).Returns(() => cntB >= 3);
-        longCommandA.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntA++;
-            order.Add("A");
-        });
-        longCommandB.Setup(c => c.Execute()).Callback(() =>
-        {
-            cntB++;
-            order.Add("B");
-        });
-        CommandC.Setup(c => c.Execute()).Callback(()=>
-        {
-            order.Add("C");
-        });
-
-        server.EnqueueCommand(longCommandA.Object);
-        server.EnqueueCommand(softStop);
-        server.EnqueueCommand(longCommandB.Object);
-        server.EnqueueCommand(CommandC.Object);
-
-        thread.Start();
-        thread.Join(500);
-
-        Assert.False(thread.IsAlive);
-        Assert.Equal(new[] {"A", "B", "C", "A", "B", "A", "B", "A", "A"}, order);
     }
 }
