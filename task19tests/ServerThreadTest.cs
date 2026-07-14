@@ -3,7 +3,7 @@ using System.Threading;
 using Moq;
 using Xunit;
 
-namespace task17tests;
+namespace task19tests;
 
 public class ServerThreadTest
 {
