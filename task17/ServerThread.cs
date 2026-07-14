@@ -52,10 +52,10 @@ public class ServerThread
 
             if (_queue.TryTake(out var command, 20))
             {
-                if (command is ILongCommand)
+                if (command is ILongCommand longCommand)
                 {
                     ExecuteCommand(command);
-                    _scheduler.Add(command);
+                    if (!longCommand.IsCompleted) _scheduler.Add(command);
                 }
                 else
                 {
